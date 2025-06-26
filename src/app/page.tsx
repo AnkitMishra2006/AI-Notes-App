@@ -45,16 +45,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="mt-auto pt-16 pb-8">
-        <div className="text-center">
-          <a
-            href="https://www.youtube.com/c/codinginflow"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Full tutorial on YouTube →
-          </a>
-        </div>
+        Made with ❤️ by CodeSorcerer
       </footer>
     </div>
   );
