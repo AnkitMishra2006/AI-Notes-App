@@ -1,8 +1,9 @@
 import { Toaster } from "@/components/ui/sonner";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import "./globals.css";
 import { ConvexClientProvider } from "./convex-client-provider";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,12 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
-
-        <Toaster position="top-right" />
-      </body>
-    </html>
+    <ConvexAuthNextjsServerProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${geistSans.className} antialiased`}>
+          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <Toaster position="top-right" />
+        </body>
+      </html>
+    </ConvexAuthNextjsServerProvider>
   );
 }
