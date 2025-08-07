@@ -13,10 +13,53 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: {
     template: "%s | Smart Notes",
-    default: "Smart Notes",
+    default: "Smart Notes - AI-Powered Note-Taking App",
   },
   description:
-    "A note-taking app with AI chatbot integration built with Convex and the Vercel AI SDK.",
+    "Intelligent note-taking app with AI chat integration. Create, manage, and search through your notes using natural language. Ask questions about your notes and get smart responses powered by AI.",
+  keywords: [
+    "note taking",
+    "AI notes",
+    "smart notes",
+    "AI chat",
+    "note search",
+    "intelligent notes",
+    "note management",
+    "AI assistant",
+    "vector search",
+    "RAG",
+  ],
+  authors: [
+    { name: "Ankit Mishra", url: "https://github.com/AnkitMishra2006" },
+  ],
+  creator: "Ankit Mishra",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://smart-notes-ai.vercel.app",
+    title: "Smart Notes - AI-Powered Note-Taking App",
+    description:
+      "Intelligent note-taking app with AI chat integration. Ask questions about your notes and get smart responses.",
+    siteName: "Smart Notes",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Smart Notes - AI-Powered Note-Taking App",
+    description:
+      "Intelligent note-taking app with AI chat integration. Ask questions about your notes and get smart responses.",
+    creator: "@AnkitMishra2006",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({

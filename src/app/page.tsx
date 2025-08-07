@@ -26,8 +26,10 @@ export default function Home() {
 
         {/* Description */}
         <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          A simple note-taking app with AI chatbot integration. Ask the chatbot
-          anything about your notes to retrieve and summarize that information.
+          Your intelligent note-taking companion powered by AI. Create,
+          organize, and search through your notes with natural language. Ask
+          questions and get instant, contextual answers from your personal
+          knowledge base.
         </p>
 
         {/* CTA Button */}
@@ -39,13 +41,23 @@ export default function Home() {
 
         {/* Built with section */}
         <div className="pt-8 text-sm text-muted-foreground">
-          <p>Built with Convex and the Vercel AI SDK</p>
+          <p>Powered by AI • Built with Next.js, Convex & Free APIs</p>
         </div>
       </main>
 
       {/* Footer */}
       <footer className="mt-auto pt-16 pb-8">
-        Made with ❤️ by CodeSorcerer
+        <p className="text-sm text-muted-foreground">
+          Made with ❤️ by{" "}
+          <a
+            href="https://github.com/AnkitMishra2006"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Ankit Mishra
+          </a>
+        </p>
       </footer>
     </div>
   );
