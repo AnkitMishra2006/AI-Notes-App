@@ -1,6 +1,6 @@
-import { openai } from "@ai-sdk/openai";
+import { groq } from "@ai-sdk/groq";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { convertToModelMessages, streamText, tool, UIMessage } from "ai";
+import { convertToCoreMessages, streamText, tool } from "ai";
 import { httpRouter } from "convex/server";
 import { z } from "zod";
 import { internal } from "./_generated/api";
@@ -20,12 +20,12 @@ http.route({
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { messages }: { messages: UIMessage[] } = await req.json();
+    const { messages } = await req.json();
 
     const lastMessages = messages.slice(-10);
 
     const result = streamText({
-      model: openai("gpt-4o"),
+      model: groq("llama-3.1-8b-instant"),
       system: `
       You are a helpful assistant that can search through the user's notes.
       Use the information from the notes to answer questions and provide insights.
@@ -34,7 +34,7 @@ http.route({
       Provide links to relevant notes using this relative URL structure (omit the base URL): '/notes?noteId=<note-id>'.
       Keep your responses concise and to the point.
       `,
-      messages: convertToModelMessages(lastMessages),
+      messages: convertToCoreMessages(lastMessages),
       tools: {
         findRelevantNotes: tool({
           description:
@@ -67,7 +67,7 @@ http.route({
       },
     });
 
-    return result.toUIMessageStreamResponse({
+    return result.toDataStreamResponse({
       headers: new Headers({
         "Access-Control-Allow-Origin": "*",
         Vary: "origin",

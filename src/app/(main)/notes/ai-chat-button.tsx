@@ -6,9 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import { useAuthToken } from "@convex-dev/auth/react";
-import { DefaultChatTransport, UIMessage } from "ai";
 import { Bot, Expand, Minimize, Send, Trash, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { Message } from "ai";
 
 const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.replace(
   /.cloud$/,
@@ -34,16 +34,12 @@ interface AIChatBoxProps {
   onClose: () => void;
 }
 
-const initialMessages: UIMessage[] = [
+const initialMessages: Message[] = [
   {
     id: "welcome-message",
     role: "assistant",
-    parts: [
-      {
-        type: "text",
-        text: "I'm your notes assistant. I can find and summarize any information that you saved.",
-      },
-    ],
+    content:
+      "I'm your notes assistant. I can find and summarize any information that you saved.",
   },
 ];
 
@@ -54,20 +50,18 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
 
   const token = useAuthToken();
 
-  const { messages, sendMessage, setMessages, status } = useChat({
-    transport: new DefaultChatTransport({
-      api: `${convexSiteUrl}/api/chat`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }),
-    messages: initialMessages,
+  const { messages, append, setMessages, isLoading } = useChat({
+    api: `${convexSiteUrl}/api/chat`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    initialMessages,
     maxSteps: 3,
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const isProcessing = status === "submitted" || status === "streaming";
+  const isProcessing = isLoading;
 
   useEffect(() => {
     if (open) {
@@ -78,7 +72,7 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (input.trim() && !isProcessing) {
-      sendMessage({ text: input });
+      append({ role: "user", content: input });
       setInput("");
     }
   }
@@ -142,8 +136,7 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
-        {status === "submitted" && lastMessageIsUser && <Loader />}
-        {status === "error" && <ErrorMessage />}
+        {isLoading && lastMessageIsUser && <Loader />}
         <div ref={messagesEndRef} />
       </div>
 
@@ -170,12 +163,10 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
 }
 
 interface ChatMessageProps {
-  message: UIMessage;
+  message: Message;
 }
 
 function ChatMessage({ message }: ChatMessageProps) {
-  const currentStep = message.parts[message.parts.length - 1];
-
   return (
     <div
       className={cn(
@@ -197,12 +188,14 @@ function ChatMessage({ message }: ChatMessageProps) {
             AI Assistant
           </div>
         )}
-        {currentStep?.type === "text" && (
-          <Markdown>{currentStep.text}</Markdown>
-        )}
-        {currentStep.type === "tool-invocation" && (
-          <div className="italic animate-pulse">Searching notes...</div>
-        )}
+        <Markdown>{message.content}</Markdown>
+        {message.toolInvocations?.map((toolInvocation) => (
+          <div key={toolInvocation.toolCallId}>
+            {toolInvocation.state === "call" && (
+              <div className="italic animate-pulse">Searching notes...</div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -214,14 +207,6 @@ function Loader() {
       <div className="bg-primary size-1.5 animate-pulse rounded-full" />
       <div className="bg-primary size-1.5 animate-pulse rounded-full delay-150" />
       <div className="bg-primary size-1.5 animate-pulse rounded-full delay-300" />
-    </div>
-  );
-}
-
-function ErrorMessage() {
-  return (
-    <div className="text-sm text-red-500">
-      Something went wrong. Please try again.
     </div>
   );
 }
