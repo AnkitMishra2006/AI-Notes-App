@@ -1,8 +1,10 @@
-export default {
+const authConfig = {
   providers: [
     {
-      domain: process.env.CONVEX_SITE_URL,
+      domain: "https://smart-notes-ai-omega.vercel.app",
       applicationID: "convex",
     },
   ],
 };
+
+export default authConfig;
