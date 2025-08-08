@@ -42,24 +42,26 @@ export function SigninForm() {
         ...values,
         flow: step,
       });
-      
+
       console.log("Sign in result:", result);
-      
+
       toast.success(
         step === "signIn"
           ? "Signed in successfully"
           : "Account created successfully"
       );
-      
+
       // Add a small delay before redirect to ensure auth state is updated
       setTimeout(() => {
         router.push("/notes");
       }, 100);
-      
     } catch (error) {
       console.error("Authentication error:", error);
       console.error("Error details:", JSON.stringify(error, null, 2));
-      console.error("Error message:", error instanceof Error ? error.message : String(error));
+      console.error(
+        "Error message:",
+        error instanceof Error ? error.message : String(error)
+      );
 
       if (
         error instanceof Error &&
@@ -69,7 +71,10 @@ export function SigninForm() {
       ) {
         form.setError("root", {
           type: "manual",
-          message: step === "signIn" ? "Invalid email or password." : "Email already exists.",
+          message:
+            step === "signIn"
+              ? "Invalid email or password."
+              : "Email already exists.",
         });
       } else if (
         error instanceof Error &&
@@ -84,7 +89,10 @@ export function SigninForm() {
         console.error("Unhandled auth error:", error);
         form.setError("root", {
           type: "manual",
-          message: error instanceof Error ? error.message : "Something went wrong. Please try again.",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Something went wrong. Please try again.",
         });
       }
     } finally {
