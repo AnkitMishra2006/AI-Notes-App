@@ -38,29 +38,54 @@ export function SigninForm() {
   async function onSubmit(values: AuthFormValues) {
     setIsLoading(true);
     try {
-      await signIn("password", {
+      const result = await signIn("password", {
         ...values,
         flow: step,
       });
+      
+      console.log("Sign in result:", result);
+      
       toast.success(
         step === "signIn"
           ? "Signed in successfully"
           : "Account created successfully"
       );
-      router.push("/notes");
+      
+      // Add a small delay before redirect to ensure auth state is updated
+      setTimeout(() => {
+        router.push("/notes");
+      }, 100);
+      
     } catch (error) {
-      console.error(error);
+      console.error("Authentication error:", error);
+      console.error("Error details:", JSON.stringify(error, null, 2));
+      console.error("Error message:", error instanceof Error ? error.message : String(error));
+
       if (
         error instanceof Error &&
         (error.message.includes("InvalidAccountId") ||
-          error.message.includes("InvalidSecret"))
+          error.message.includes("InvalidSecret") ||
+          error.message.includes("ACCOUNT_NOT_FOUND"))
       ) {
         form.setError("root", {
           type: "manual",
-          message: "Invalid credentials.",
+          message: step === "signIn" ? "Invalid email or password." : "Email already exists.",
+        });
+      } else if (
+        error instanceof Error &&
+        error.message.includes("ACCOUNT_ALREADY_EXISTS")
+      ) {
+        form.setError("root", {
+          type: "manual",
+          message: "Account with this email already exists.",
         });
       } else {
-        toast.error("Something went wrong. Please try again.");
+        // Log the full error for debugging
+        console.error("Unhandled auth error:", error);
+        form.setError("root", {
+          type: "manual",
+          message: error instanceof Error ? error.message : "Something went wrong. Please try again.",
+        });
       }
     } finally {
       setIsLoading(false);
